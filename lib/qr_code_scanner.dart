@@ -99,8 +99,10 @@ class QRViewController {
   final MethodChannel _channel;
 
   StreamController<String> _scanUpdateController = StreamController<String>();
+  StreamController<String> _scanUpdatePoint = StreamController<String>();
 
   Stream<String> get scannedDataStream => _scanUpdateController.stream;
+  Stream<String> get scannedResultPoints => _scanUpdatePoint.stream;
 
   QRViewController._(int id, GlobalKey qrKey)
       : _channel = MethodChannel('net.touchcapture.qr.flutterqr/qrview_$id') {
@@ -116,6 +118,12 @@ class QRViewController {
             if (call.arguments != null) {
               _scanUpdateController.sink.add(call.arguments.toString());
             }
+            break;
+
+            case "onPossibleResultPoints":
+              _scanUpdatePoint.sink.add(call.arguments.toString());
+              break;
+
         }
       },
     );
