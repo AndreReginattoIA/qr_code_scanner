@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.view.View
 import com.google.zxing.ResultPoint
 import android.hardware.Camera.CameraInfo
+import android.hardware.Camera.Size
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.BarcodeView
@@ -47,6 +48,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
 
             override fun onActivityResumed(p0: Activity?) {
                 if (p0 == registrar.activity()) {
+                    updateCameraSize();
                     barcodeView?.resume()
                 }
             }
@@ -78,6 +80,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
             settings?.requestedCameraId = CameraInfo.CAMERA_FACING_FRONT
 
         barcodeView?.cameraSettings = settings
+        updateCameraSize();
         barcodeView?.resume()
     }
 
@@ -97,6 +100,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
 
     private fun resumeCamera() {
         if (!barcodeView!!.isPreviewActive) {
+            updateCameraSize();
             barcodeView?.resume()
         }
     }
@@ -108,6 +112,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
 
     override fun getView(): View {
         return initBarCodeView()?.apply {
+            updateCameraSize();
             resume()
         }!!
     }
@@ -152,6 +157,11 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
     private fun hasCameraPermission(): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
                 activity.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun updateCameraSize() {
+        channel.invokeMethod("onCameraWidthUpdated",barcodeView?.getSize().width.toString() )
+        channel.invokeMethod("onCameraHeightUpdated",barcodeView?.getSize().height.toString() )
     }
 
 
