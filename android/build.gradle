@@ -19,6 +19,7 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
+        maven { url "https://jitpack.io" }
     }
 }
 
@@ -48,5 +49,6 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.github.kiatuki:zxing-android-embedded:master"
+    implementation 'com.github.jitpack:gradle-simple:master-SNAPSHOT'
+    implementation "com.github.kiatuki:zxing-android-embedded:master-SNAPSHOT"
 }
