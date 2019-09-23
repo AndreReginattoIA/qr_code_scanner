@@ -160,8 +160,8 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
     }
 
     private fun updateCameraSize() {
-        channel.invokeMethod("onCameraWidthUpdated",barcodeView?.getSize().width.toString() )
-        channel.invokeMethod("onCameraHeightUpdated",barcodeView?.getSize().height.toString() )
+        channel.invokeMethod("onCameraWidthUpdated",barcodeView?.getSize()?.width?.toString() )
+        channel.invokeMethod("onCameraHeightUpdated",barcodeView?.getSize()?.height?.toString() )
     }
 
 
