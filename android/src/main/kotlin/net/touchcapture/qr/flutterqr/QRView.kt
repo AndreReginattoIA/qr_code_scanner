@@ -48,8 +48,8 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
 
             override fun onActivityResumed(p0: Activity?) {
                 if (p0 == registrar.activity()) {
-                    updateCameraSize();
                     barcodeView?.resume()
+                    updateCameraSize()
                 }
             }
 
@@ -80,8 +80,8 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
             settings?.requestedCameraId = CameraInfo.CAMERA_FACING_FRONT
 
         barcodeView?.cameraSettings = settings
-        updateCameraSize();
         barcodeView?.resume()
+        updateCameraSize()
     }
 
     private fun toggleFlash() {
@@ -112,8 +112,8 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
 
     override fun getView(): View {
         return initBarCodeView()?.apply {
-            updateCameraSize();
             resume()
+            updateCameraSize()
         }!!
     }
 
