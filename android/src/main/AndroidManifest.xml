@@ -1,8 +1,3 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="net.touchcapture.qr.flutterqr">
-  <com.journeyapps.barcodescanner.DecoratedBarcodeView
-        android:layout_width="1024"
-        android:layout_height="768"
-        app:zxing_use_texture_view="false" 
-        app:zxing_preview_scaling_strategy="centerCrop"/>
 </manifest>
