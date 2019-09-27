@@ -100,13 +100,19 @@ class QRViewController {
 
   StreamController<String> _scanUpdateController = StreamController<String>();
   StreamController<String> _scanUpdatePoint = StreamController<String>();
+  StreamController<String> _scanUpdateTransformedPoint = StreamController<String>();
   StreamController<String> _cameraWidthUpdateController = StreamController<String>();
   StreamController<String> _cameraHeightUpdateController = StreamController<String>();
+  StreamController<String> _bitmapController = StreamController<String>();
+  StreamController<String> _bitmapWithResultPointsController = StreamController<String>();
 
   Stream<String> get scannedDataStream => _scanUpdateController.stream;
   Stream<String> get scannedResultPoints => _scanUpdatePoint.stream;
+  Stream<String> get scannedTransformedResultPoints => _scanUpdateTransformedPoint.stream;
   Stream<String> get updatedCameraWidth => _cameraWidthUpdateController.stream;
   Stream<String> get updatedCameraHeight => _cameraHeightUpdateController.stream;
+  Stream<String> get bitmap => _bitmapController.stream;
+  Stream<String> get bitmapWithResultPoints => _bitmapWithResultPointsController.stream;
 
   QRViewController._(int id, GlobalKey qrKey)
       : _channel = MethodChannel('net.touchcapture.qr.flutterqr/qrview_$id') {
@@ -124,8 +130,12 @@ class QRViewController {
             }
             break;
 
-            case "onPossibleResultPoints":
+            case "onResultPoints":
               _scanUpdatePoint.sink.add(call.arguments.toString());
+              break;
+
+            case "onTransformedResultPoints":
+              _scanUpdateTransformedPoint.sink.add(call.arguments.toString());
               break;
             
             case "onCameraWidthUpdated":
@@ -135,7 +145,22 @@ class QRViewController {
             case "onCameraHeightUpdated":
               _cameraHeightUpdateController.sink.add(call.arguments.toString());
               break;
-
+            
+            case "onBitmap":
+              _bitmapController.sink.add(call.arguments.toString());
+              break;
+              
+            case "onBitmapWithResultPoints":
+              _bitmapWithResultPointsController.sink.add(call.arguments.toString());
+              break;
+            
+            case "onQRLuminanceSourceWidth":
+              print('WIDTH: ${call.arguments.toString()}');
+              break;
+              
+            case "onQRLuminanceSourceHeight":
+              print('HEIGHT: ${call.arguments.toString()}');
+              break;
         }
       },
     );
