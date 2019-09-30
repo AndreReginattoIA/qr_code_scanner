@@ -6,12 +6,13 @@ import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import com.google.zxing.ResultPoint
 import android.hardware.Camera.CameraInfo
-import android.hardware.Camera.Size
+import android.util.Base64;
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.BarcodeView
@@ -19,6 +20,9 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.platform.PlatformView
+import java.io.ByteArrayOutputStream
+import com.google.zxing.common.PerspectiveTransform ;
+import com.google.zxing.PlanarYUVLuminanceSource;
 
 class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         PlatformView,MethodChannel.MethodCallHandler {
@@ -39,6 +43,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         channel = MethodChannel(registrar.messenger(), "net.touchcapture.qr.flutterqr/qrview_$id")
         channel.setMethodCallHandler(this)
         checkAndRequestPermission(null)
+        //updateCameraSize()
         registrar.activity().application.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
             override fun onActivityPaused(p0: Activity?) {
                 if (p0 == registrar.activity()) {
@@ -49,7 +54,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
             override fun onActivityResumed(p0: Activity?) {
                 if (p0 == registrar.activity()) {
                     barcodeView?.resume()
-                    updateCameraSize()
+                    //updateCameraSize()
                 }
             }
 
@@ -81,7 +86,6 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
 
         barcodeView?.cameraSettings = settings
         barcodeView?.resume()
-        updateCameraSize()
     }
 
     private fun toggleFlash() {
@@ -100,7 +104,6 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
 
     private fun resumeCamera() {
         if (!barcodeView!!.isPreviewActive) {
-            updateCameraSize();
             barcodeView?.resume()
         }
     }
@@ -113,7 +116,6 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
     override fun getView(): View {
         return initBarCodeView()?.apply {
             resume()
-            updateCameraSize()
         }!!
     }
 
@@ -129,8 +131,33 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         barcode.decodeContinuous(
                 object : BarcodeCallback {
                     override fun barcodeResult(result: BarcodeResult) {
+                        //updateCameraSize()
                         channel.invokeMethod("onRecognizeQR", result.text)
-                        channel.invokeMethod("onPossibleResultPoints", result.resultPoints.map { it -> it.toString()})
+                        channel.invokeMethod("onResultPoints", result.resultPoints.map { it -> it.toString()})
+                        channel.invokeMethod("onFramingRect", barcode.getFramingRect().flattenToString())
+                        channel.invokeMethod("onTransformedResultPoints", result.getTransformedResultPoints().map { it -> it.toString()})
+                        channel.invokeMethod("onBitmap", bitmapToString(result.getBitmap()))
+                        channel.invokeMethod("onBitmapWithResultPoints", bitmapToString(result.getBitmapWithResultPoints(0xFF0000AA.toInt())))
+                        // channel.invokeMethod("onPerspectiveTransformQ2Q",PerspectiveTransform.quadrilateralToQuadrilateral(
+                        //     3.5f,
+                        //     3.5f,
+                        //     dimMinusThree,
+                        //     3.5f,
+                        //     sourceBottomRightX,
+                        //     sourceBottomRightY,
+                        //     3.5f,
+                        //     dimMinusThree,
+                        //     result.resultPoints[1].getX(),
+                        //     result.resultPoints[1].getY(),
+                        //     result.resultPoints[2].getX(),
+                        //     result.resultPoints[2].getY(),
+                        //     result.resultPoints[3].getX(),
+                        //     result.resultPoints[3].getY(),
+                        //     result.resultPoints[0].getX(),
+                        //     result.resultPoints[0].getY());
+                        // )
+                        channel.invokeMethod("onQRLuminanceSourceWidth", (result.source as PlanarYUVLuminanceSource).dataWidth.toString());
+                        channel.invokeMethod("onQRLuminanceSourceHeight", (result.source as PlanarYUVLuminanceSource).dataHeight.toString());
                     }
 
                     override fun possibleResultPoints(resultPoints: List<ResultPoint>) {}
@@ -159,10 +186,10 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
                 activity.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun updateCameraSize() {
-        channel.invokeMethod("onCameraWidthUpdated",barcodeView?.getSize()?.width?.toString() )
-        channel.invokeMethod("onCameraHeightUpdated",barcodeView?.getSize()?.height?.toString() )
-    }
+    // private fun updateCameraSize() {
+    //     channel.invokeMethod("onCameraWidthUpdated",barcodeView?.getSize()?.width?.toString() )
+    //     channel.invokeMethod("onCameraHeightUpdated",barcodeView?.getSize()?.height?.toString() )
+    // }
 
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -214,4 +241,10 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         }
     }
 
+    fun bitmapToString(bitmap: Bitmap): String {
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+        val b = baos.toByteArray()
+        return Base64.encodeToString(b, Base64.URL_SAFE)
+    }
 }
