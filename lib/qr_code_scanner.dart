@@ -101,6 +101,7 @@ class QRViewController {
   StreamController<String> _scanUpdateController = StreamController<String>();
   StreamController<String> _scanUpdatePoint = StreamController<String>();
   StreamController<String> _scanUpdateTransformedPoint = StreamController<String>();
+  StreamController<String> _framingRectController = StreamController<String>();
   StreamController<String> _cameraWidthUpdateController = StreamController<String>();
   StreamController<String> _cameraHeightUpdateController = StreamController<String>();
   StreamController<String> _bitmapController = StreamController<String>();
@@ -109,6 +110,7 @@ class QRViewController {
   Stream<String> get scannedDataStream => _scanUpdateController.stream;
   Stream<String> get scannedResultPoints => _scanUpdatePoint.stream;
   Stream<String> get scannedTransformedResultPoints => _scanUpdateTransformedPoint.stream;
+  Stream<String> get framingRectStream => _framingRectController.stream;
   Stream<String> get updatedCameraWidth => _cameraWidthUpdateController.stream;
   Stream<String> get updatedCameraHeight => _cameraHeightUpdateController.stream;
   Stream<String> get bitmap => _bitmapController.stream;
@@ -136,6 +138,10 @@ class QRViewController {
 
             case "onTransformedResultPoints":
               _scanUpdateTransformedPoint.sink.add(call.arguments.toString());
+              break;
+            
+            case "onFramingRect":
+              _framingRectController.sink.add(call.arguments.toString());
               break;
             
             case "onCameraWidthUpdated":
