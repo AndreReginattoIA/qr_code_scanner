@@ -138,7 +138,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
                         channel.invokeMethod("onResultPoints", result.resultPoints.map { it -> it.toString()})
                         channel.invokeMethod("onFramingRect", barcode.getPreviewFramingRect().flattenToString())
                         channel.invokeMethod("onTransformedResultPoints", result.getTransformedResultPoints().map { it -> it.toString()})
-                        channel.invokeMethod("onBitMatrix", BinaryBitmap(HybridBinarizer((result.getSourceData().createSource()))).getBlackMatrix().toString("1","0"))
+                        channel.invokeMethod("onBitMatrix", BinaryBitmap(HybridBinarizer((result.sourceData.createSource()))).getBlackMatrix().toString("1","0"))
                         channel.invokeMethod("onBitmap", bitmapToString(result.getBitmap()))
                         channel.invokeMethod("onBitmapWithResultPoints", bitmapToString(result.getBitmapWithResultPoints(0xFF0000AA.toInt())))
                         // channel.invokeMethod("onPerspectiveTransformQ2Q",PerspectiveTransform.quadrilateralToQuadrilateral(
