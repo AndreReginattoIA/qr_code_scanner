@@ -155,7 +155,7 @@ class QRViewController {
               break;
             
             case "onBitMatrix":
-              _bitMatrixController.sink.add.(call.arguments.toString());
+              _bitMatrixController.sink.add(call.arguments.toString());
               break;
 
             case "onBitmap":
