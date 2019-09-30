@@ -104,6 +104,7 @@ class QRViewController {
   StreamController<String> _framingRectController = StreamController<String>();
   StreamController<String> _cameraWidthUpdateController = StreamController<String>();
   StreamController<String> _cameraHeightUpdateController = StreamController<String>();
+  StreamController<String> _bitMatrixController = StreamController<String>();
   StreamController<String> _bitmapController = StreamController<String>();
   StreamController<String> _bitmapWithResultPointsController = StreamController<String>();
 
@@ -113,6 +114,7 @@ class QRViewController {
   Stream<String> get framingRectStream => _framingRectController.stream;
   Stream<String> get updatedCameraWidth => _cameraWidthUpdateController.stream;
   Stream<String> get updatedCameraHeight => _cameraHeightUpdateController.stream;
+  Stream<String> get bitMatrix => _bitMatrixController.stream;
   Stream<String> get bitmap => _bitmapController.stream;
   Stream<String> get bitmapWithResultPoints => _bitmapWithResultPointsController.stream;
 
@@ -152,6 +154,10 @@ class QRViewController {
               _cameraHeightUpdateController.sink.add(call.arguments.toString());
               break;
             
+            case "onBitMatrix":
+              _bitMatrixController.sink.add.(call.arguments.toString());
+              break;
+
             case "onBitmap":
               _bitmapController.sink.add(call.arguments.toString());
               break;

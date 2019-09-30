@@ -23,6 +23,8 @@ import io.flutter.plugin.platform.PlatformView
 import java.io.ByteArrayOutputStream
 import com.google.zxing.common.PerspectiveTransform ;
 import com.google.zxing.PlanarYUVLuminanceSource;
+import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.BinaryBitmap;
 
 class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         PlatformView,MethodChannel.MethodCallHandler {
@@ -136,7 +138,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
                         channel.invokeMethod("onResultPoints", result.resultPoints.map { it -> it.toString()})
                         channel.invokeMethod("onFramingRect", barcode.getPreviewFramingRect().flattenToString())
                         channel.invokeMethod("onTransformedResultPoints", result.getTransformedResultPoints().map { it -> it.toString()})
-                        channel.invokeMethod("onLuminanceSource", byteToString(result.getSourceData().createSource()))
+                        channel.invokeMethod("onBitMatrix", BinaryBitmap(HybridBinarizer((result.getSourceData().createSource()))).getBlackMatrix().toString("1","0"))
                         channel.invokeMethod("onBitmap", bitmapToString(result.getBitmap()))
                         channel.invokeMethod("onBitmapWithResultPoints", bitmapToString(result.getBitmapWithResultPoints(0xFF0000AA.toInt())))
                         // channel.invokeMethod("onPerspectiveTransformQ2Q",PerspectiveTransform.quadrilateralToQuadrilateral(
@@ -247,9 +249,5 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
         val b = baos.toByteArray()
         return Base64.encodeToString(b, Base64.URL_SAFE)
-    }
-
-    fun byteToString(bytes: ByteArray): String {
-        return Base64.getEncoder().encodeToString(bytes);
     }
 }
