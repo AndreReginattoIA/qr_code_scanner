@@ -156,8 +156,8 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
                         //     result.resultPoints[0].getX(),
                         //     result.resultPoints[0].getY());
                         // )
-                        channel.invokeMethod("onQRLuminanceSourceWidth", (result.source as PlanarYUVLuminanceSource).dataWidth.toString());
-                        channel.invokeMethod("onQRLuminanceSourceHeight", (result.source as PlanarYUVLuminanceSource).dataHeight.toString());
+                        channel.invokeMethod("onQRLuminanceSourceWidth", (result.getResult().source as PlanarYUVLuminanceSource).dataWidth.toString());
+                        channel.invokeMethod("onQRLuminanceSourceHeight", (result.getResult().source as PlanarYUVLuminanceSource).dataHeight.toString());
                     }
 
                     override fun possibleResultPoints(resultPoints: List<ResultPoint>) {}
