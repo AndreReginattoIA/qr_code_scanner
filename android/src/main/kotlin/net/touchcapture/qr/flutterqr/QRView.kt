@@ -134,7 +134,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
                         //updateCameraSize()
                         channel.invokeMethod("onRecognizeQR", result.text)
                         channel.invokeMethod("onResultPoints", result.resultPoints.map { it -> it.toString()})
-                        channel.invokeMethod("onFramingRect", barcode.getFramingRect().flattenToString())
+                        channel.invokeMethod("onFramingRect", barcode.getPreviewFramingRect().flattenToString())
                         channel.invokeMethod("onTransformedResultPoints", result.getTransformedResultPoints().map { it -> it.toString()})
                         channel.invokeMethod("onBitmap", bitmapToString(result.getBitmap()))
                         channel.invokeMethod("onBitmapWithResultPoints", bitmapToString(result.getBitmapWithResultPoints(0xFF0000AA.toInt())))
