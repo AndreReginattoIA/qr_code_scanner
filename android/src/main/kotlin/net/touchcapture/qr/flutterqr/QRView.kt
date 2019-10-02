@@ -45,7 +45,6 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         channel = MethodChannel(registrar.messenger(), "net.touchcapture.qr.flutterqr/qrview_$id")
         channel.setMethodCallHandler(this)
         checkAndRequestPermission(null)
-        //updateCameraSize()
         registrar.activity().application.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
             override fun onActivityPaused(p0: Activity?) {
                 if (p0 == registrar.activity()) {
@@ -56,7 +55,6 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
             override fun onActivityResumed(p0: Activity?) {
                 if (p0 == registrar.activity()) {
                     barcodeView?.resume()
-                    //updateCameraSize()
                 }
             }
 
@@ -133,34 +131,14 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         barcode.decodeContinuous(
                 object : BarcodeCallback {
                     override fun barcodeResult(result: BarcodeResult) {
-                        //updateCameraSize()
-                        channel.invokeMethod("onRecognizeQR", result.text)
-                        channel.invokeMethod("onResultPoints", result.resultPoints.map { it -> it.toString()})
-                        channel.invokeMethod("onFramingRect", barcode.getPreviewFramingRect().flattenToString())
-                        channel.invokeMethod("onTransformedResultPoints", result.getTransformedResultPoints().map { it -> it.toString()})
-                        channel.invokeMethod("onBitMatrix", BinaryBitmap(HybridBinarizer((result.sourceData.createSource()))).getBlackMatrix().toString("1","0"))
-                        channel.invokeMethod("onBitmap", bitmapToString(result.getBitmap()))
-                        channel.invokeMethod("onBitmapWithResultPoints", bitmapToString(result.getBitmapWithResultPoints(0xFF0000AA.toInt())))
-                        // channel.invokeMethod("onPerspectiveTransformQ2Q",PerspectiveTransform.quadrilateralToQuadrilateral(
-                        //     3.5f,
-                        //     3.5f,
-                        //     dimMinusThree,
-                        //     3.5f,
-                        //     sourceBottomRightX,
-                        //     sourceBottomRightY,
-                        //     3.5f,
-                        //     dimMinusThree,
-                        //     result.resultPoints[1].getX(),
-                        //     result.resultPoints[1].getY(),
-                        //     result.resultPoints[2].getX(),
-                        //     result.resultPoints[2].getY(),
-                        //     result.resultPoints[3].getX(),
-                        //     result.resultPoints[3].getY(),
-                        //     result.resultPoints[0].getX(),
-                        //     result.resultPoints[0].getY());
-                        // )
-                        // channel.invokeMethod("onQRLuminanceSourceWidth", (result.getResult().source as PlanarYUVLuminanceSource).dataWidth.toString());
-                        // channel.invokeMethod("onQRLuminanceSourceHeight", (result.getResult().source as PlanarYUVLuminanceSource).dataHeight.toString());
+                        if(result.resultPoints.length >= 3) // Less then 3 indicates barcode. We only want QR codes
+                        {
+                            channel.invokeMethod("onRecognizeQRString", result.text)
+                            channel.invokeMethod("onRecognizeQRResultPoints", result.resultPoints.map { it -> it.toString()})
+                            channel.invokeMethod("onRecognizeQRPreviewFramingRect", barcode.getPreviewFramingRect().flattenToString())
+                            channel.invokeMethod("onRecognizeQRBitMatrix", BinaryBitmap(HybridBinarizer((result.sourceData.createSource()))).getBlackMatrix().toString("1","0"))
+                            channel.invokeMethod("onRecognizeQRBitmap", bitmapToString(result.getBitmap()))
+                        }
                     }
 
                     override fun possibleResultPoints(resultPoints: List<ResultPoint>) {}
@@ -188,12 +166,6 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
                 activity.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
     }
-
-    // private fun updateCameraSize() {
-    //     channel.invokeMethod("onCameraWidthUpdated",barcodeView?.getSize()?.width?.toString() )
-    //     channel.invokeMethod("onCameraHeightUpdated",barcodeView?.getSize()?.height?.toString() )
-    // }
-
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when(call?.method){

@@ -94,29 +94,20 @@ class _CreationParams {
 }
 
 class QRViewController {
-  static const scanMethodCall = "onRecognizeQR";
 
   final MethodChannel _channel;
 
-  StreamController<String> _scanUpdateController = StreamController<String>();
-  StreamController<String> _scanUpdatePoint = StreamController<String>();
-  StreamController<String> _scanUpdateTransformedPoint = StreamController<String>();
-  StreamController<String> _framingRectController = StreamController<String>();
-  StreamController<String> _cameraWidthUpdateController = StreamController<String>();
-  StreamController<String> _cameraHeightUpdateController = StreamController<String>();
+  StreamController<String> _scanStringController = StreamController<String>();
+  StreamController<String> _scanResultPoints = StreamController<String>();
+  StreamController<String> _previewFramingRectController = StreamController<String>();
   StreamController<String> _bitMatrixController = StreamController<String>();
   StreamController<String> _bitmapController = StreamController<String>();
-  StreamController<String> _bitmapWithResultPointsController = StreamController<String>();
 
-  Stream<String> get scannedDataStream => _scanUpdateController.stream;
-  Stream<String> get scannedResultPoints => _scanUpdatePoint.stream;
-  Stream<String> get scannedTransformedResultPoints => _scanUpdateTransformedPoint.stream;
-  Stream<String> get framingRectStream => _framingRectController.stream;
-  Stream<String> get updatedCameraWidth => _cameraWidthUpdateController.stream;
-  Stream<String> get updatedCameraHeight => _cameraHeightUpdateController.stream;
+  Stream<String> get scannedString => _scanStringController.stream;
+  Stream<String> get scannedResultPoints => _scanResultPoints.stream;
+  Stream<String> get previewFramingRectStream => _previewFramingRectController.stream;
   Stream<String> get bitMatrix => _bitMatrixController.stream;
   Stream<String> get bitmap => _bitmapController.stream;
-  Stream<String> get bitmapWithResultPoints => _bitmapWithResultPointsController.stream;
 
   QRViewController._(int id, GlobalKey qrKey)
       : _channel = MethodChannel('net.touchcapture.qr.flutterqr/qrview_$id') {
@@ -128,50 +119,29 @@ class QRViewController {
     _channel.setMethodCallHandler(
       (MethodCall call) async {
         switch (call.method) {
-          case scanMethodCall:
-            if (call.arguments != null) {
-              _scanUpdateController.sink.add(call.arguments.toString());
-            }
+          case "onRecognizeQRString":
+            if (call.arguments != null)
+              _scanStringController.sink.add(call.arguments.toString());
             break;
 
-            case "onResultPoints":
-              _scanUpdatePoint.sink.add(call.arguments.toString());
+            case "onRecognizeQRResultPoints":
+              if (call.arguments != null)
+                _scanResultPoints.sink.add(call.arguments.toString());
+              break;
+            
+            case "onRecognizeQRPreviewFramingRect":
+              if (call.arguments != null)
+                _previewFramingRectController.sink.add(call.arguments.toString());
+              break;
+            
+            case "onRecognizeQRBitMatrix":
+              if (call.arguments != null)
+                _bitMatrixController.sink.add(call.arguments.toString());
               break;
 
-            case "onTransformedResultPoints":
-              _scanUpdateTransformedPoint.sink.add(call.arguments.toString());
-              break;
-            
-            case "onFramingRect":
-              _framingRectController.sink.add(call.arguments.toString());
-              break;
-            
-            case "onCameraWidthUpdated":
-              _cameraWidthUpdateController.sink.add(call.arguments.toString());
-              break;
-            
-            case "onCameraHeightUpdated":
-              _cameraHeightUpdateController.sink.add(call.arguments.toString());
-              break;
-            
-            case "onBitMatrix":
-              _bitMatrixController.sink.add(call.arguments.toString());
-              break;
-
-            case "onBitmap":
-              _bitmapController.sink.add(call.arguments.toString());
-              break;
-              
-            case "onBitmapWithResultPoints":
-              _bitmapWithResultPointsController.sink.add(call.arguments.toString());
-              break;
-            
-            case "onQRLuminanceSourceWidth":
-              print('WIDTH: ${call.arguments.toString()}');
-              break;
-              
-            case "onQRLuminanceSourceHeight":
-              print('HEIGHT: ${call.arguments.toString()}');
+            case "onRecognizeQRBitmap":
+              if (call.arguments != null)
+                _bitmapController.sink.add(call.arguments.toString());
               break;
         }
       },
@@ -195,6 +165,10 @@ class QRViewController {
   }
 
   void dispose() {
-    _scanUpdateController.close();
+    _scanStringController.close();
+    _scanResultPoints.close();
+    _previewFramingRectController.close();
+    _bitMatrixController.close();
+    _bitmapController.close();
   }
 }
