@@ -137,7 +137,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
                             channel.invokeMethod("onRecognizeQRString", result.text)
                             channel.invokeMethod("onRecognizeQRResultPoints", result.resultPoints.map { it -> it.toString()})
                             channel.invokeMethod("onRecognizeQRBitMatrix", BinaryBitmap(HybridBinarizer((result.sourceData.createSource()))).getBlackMatrix().toString("1","0"))
-                            channel.invokeMethod("onRecognizeQRBitmap", bitmapToString(result.getBitmap()))
+                            //channel.invokeMethod("onRecognizeQRBitmap", bitmapToString(result.getBitmap()))
                         }
                     }
 

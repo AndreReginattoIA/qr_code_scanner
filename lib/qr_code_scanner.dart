@@ -124,25 +124,25 @@ class QRViewController {
               _scanStringController.sink.add(call.arguments.toString());
             break;
 
-            case "onRecognizeQRResultPoints":
-              if (call.arguments != null)
-                _scanResultPoints.sink.add(call.arguments.toString());
-              break;
-            
-            case "onRecognizeQRPreviewFramingRect":
-              if (call.arguments != null)
-                _previewFramingRectController.sink.add(call.arguments.toString());
-              break;
-            
-            case "onRecognizeQRBitMatrix":
-              if (call.arguments != null)
-                _bitMatrixController.sink.add(call.arguments.toString());
-              break;
+          case "onRecognizeQRResultPoints":
+            if (call.arguments != null)
+              _scanResultPoints.sink.add(call.arguments.toString());
+            break;
+          
+          case "onRecognizeQRPreviewFramingRect":
+            if (call.arguments != null)
+              _previewFramingRectController.sink.add(call.arguments.toString());
+            break;
+          
+          case "onRecognizeQRBitMatrix":
+            if (call.arguments != null)
+              _bitMatrixController.sink.add(call.arguments.toString());
+            break;
 
-            case "onRecognizeQRBitmap":
-              if (call.arguments != null)
-                _bitmapController.sink.add(call.arguments.toString());
-              break;
+          case "onRecognizeQRBitmap":
+            if (call.arguments != null)
+              _bitmapController.sink.add(call.arguments.toString());
+            break;
         }
       },
     );
