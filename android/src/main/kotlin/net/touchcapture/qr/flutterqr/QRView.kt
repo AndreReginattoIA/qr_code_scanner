@@ -131,7 +131,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         barcode.decodeContinuous(
                 object : BarcodeCallback {
                     override fun barcodeResult(result: BarcodeResult) {
-                        if(result.resultPoints.length >= 3) // Less then 3 indicates barcode. We only want QR codes
+                        if(result.resultPoints.size >= 3) // Less then 3 indicates barcode. We only want QR codes
                         {
                             channel.invokeMethod("onRecognizeQRString", result.text)
                             channel.invokeMethod("onRecognizeQRResultPoints", result.resultPoints.map { it -> it.toString()})
