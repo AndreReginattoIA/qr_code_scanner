@@ -133,10 +133,11 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
                     override fun barcodeResult(result: BarcodeResult) {
                         if(result.resultPoints.size >= 3 && barcode.getPreviewFramingRect() != null) // Less then 3 indicates barcode. We only want QR codes
                         {
+                            channel.invokeMethod("onRecognizeQRViewfinderRect", barcode.getDisplayConfiguration()?.scalePreview(barcode.getPreviewSize())?.flattenToString())
+                            channel.invokeMethod("onRecognizeQRFramingRect", barcode.getFramingRect()?.flattenToString())
+                            channel.invokeMethod("onRecognizeQRPreviewFramingRect", barcode.getPreviewFramingRect()?.flattenToString())
+                            pauseCamera()
                             channel.invokeMethod("onRecognizeQRString", result.text)
-                            channel.invokeMethod("onRecognizeQRViewfinderRect", barcode.getDisplayConfiguration().scalePreview(barcode.getPreviewSize()).flattenToString())
-                            channel.invokeMethod("onRecognizeQRFramingRect", barcode.getFramingRect().flattenToString())
-                            channel.invokeMethod("onRecognizeQRPreviewFramingRect", barcode.getPreviewFramingRect().flattenToString())
                             channel.invokeMethod("onRecognizeQRResultPoints", result.resultPoints.map { it -> it.toString()})
                             channel.invokeMethod("onRecognizeQRBitMatrix", BinaryBitmap(HybridBinarizer((result.sourceData.createSource()))).getBlackMatrix().toString("1","0"))
                             channel.invokeMethod("onRecognizeQRBitmap", bitmapToString(result.getBitmap()))
