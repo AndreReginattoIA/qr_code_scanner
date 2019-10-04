@@ -102,16 +102,16 @@ class QRViewController {
   StreamController<String> _viewfinderRectController = StreamController<String>();
   StreamController<String> _framingRectController = StreamController<String>();
   StreamController<String> _previewFramingRectController = StreamController<String>();
+  StreamController<String> _previewSizeController = StreamController<String>();
   StreamController<String> _bitMatrixController = StreamController<String>();
-  StreamController<String> _bitmapController = StreamController<String>();
 
   Stream<String> get scannedString => _scanStringController.stream;
   Stream<String> get scannedResultPoints => _scanResultPoints.stream;
   Stream<String> get viewfinderRectStream => _viewfinderRectController.stream;
   Stream<String> get framingRectStream => _framingRectController.stream;
   Stream<String> get previewFramingRectStream => _previewFramingRectController.stream;
+  Stream<String> get previewSizeStream => _previewSizeController.stream;
   Stream<String> get bitMatrix => _bitMatrixController.stream;
-  Stream<String> get bitmap => _bitmapController.stream;
 
   QRViewController._(int id, GlobalKey qrKey)
       : _channel = MethodChannel('net.touchcapture.qr.flutterqr/qrview_$id') {
@@ -153,9 +153,9 @@ class QRViewController {
               _bitMatrixController.sink.add(call.arguments.toString());
             break;
 
-          case "onRecognizeQRBitmap":
+          case "onRecognizeQRPreviewSize":
             if (call.arguments != null)
-              _bitmapController.sink.add(call.arguments.toString());
+              _previewSizeController.sink.add(call.arguments.toString());
             break;
         }
       },
@@ -183,6 +183,5 @@ class QRViewController {
     _scanResultPoints.close();
     _previewFramingRectController.close();
     _bitMatrixController.close();
-    _bitmapController.close();
   }
 }
