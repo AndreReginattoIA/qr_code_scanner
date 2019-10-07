@@ -128,7 +128,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
 
     private fun createBarCodeView(): BarcodeView? {
         val barcode = BarcodeView(registrar.activity())
-        barcode.decodeContinuous(
+        barcode.decodeSingle(
                 object : BarcodeCallback {
                     override fun barcodeResult(result: BarcodeResult) {
                         if(result.resultPoints.size >= 3 && barcode.getPreviewFramingRect() != null) // Less then 3 indicates barcode. We only want QR codes
