@@ -98,20 +98,20 @@ class QRViewController {
   final MethodChannel _channel;
 
   StreamController<String> _scanStringController = StreamController<String>();
-  StreamController<String> _scanResultPoints = StreamController<String>();
+  StreamController<String> _scanResultPointsController = StreamController<String>();
   StreamController<String> _viewfinderRectController = StreamController<String>();
   StreamController<String> _framingRectController = StreamController<String>();
   StreamController<String> _previewFramingRectController = StreamController<String>();
   StreamController<String> _previewSizeController = StreamController<String>();
   StreamController<String> _bitMatrixController = StreamController<String>();
 
-  Stream<String> get scannedString => _scanStringController.stream;
-  Stream<String> get scannedResultPoints => _scanResultPoints.stream;
+  Stream<String> get scannedStringStream => _scanStringController.stream;
+  Stream<String> get scannedResultPointsStream => _scanResultPointsController.stream;
   Stream<String> get viewfinderRectStream => _viewfinderRectController.stream;
   Stream<String> get framingRectStream => _framingRectController.stream;
   Stream<String> get previewFramingRectStream => _previewFramingRectController.stream;
   Stream<String> get previewSizeStream => _previewSizeController.stream;
-  Stream<String> get bitMatrix => _bitMatrixController.stream;
+  Stream<String> get bitMatrixStream => _bitMatrixController.stream;
 
   QRViewController._(int id, GlobalKey qrKey)
       : _channel = MethodChannel('net.touchcapture.qr.flutterqr/qrview_$id') {
@@ -130,7 +130,7 @@ class QRViewController {
 
           case "onRecognizeQRResultPoints":
             if (call.arguments != null)
-              _scanResultPoints.sink.add(call.arguments.toString());
+              _scanResultPointsController.sink.add(call.arguments.toString());
             break;
           
           case "onRecognizeQRViewfinderRect":
@@ -179,9 +179,12 @@ class QRViewController {
   }
 
   void dispose() {
-    _scanStringController.close();
-    _scanResultPoints.close();
-    _previewFramingRectController.close();
-    _bitMatrixController.close();
+  _scanStringController.close();
+  _scanResultPointsController.close();
+  _viewfinderRectController.close();
+  _framingRectController.close();
+  _previewFramingRectController.close();
+  _previewSizeController.close();
+  _bitMatrixController.close();
   }
 }
