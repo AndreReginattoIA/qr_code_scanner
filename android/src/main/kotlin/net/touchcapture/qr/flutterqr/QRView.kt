@@ -134,7 +134,6 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
                         if(result.resultPoints.size >= 3 && barcode.getPreviewFramingRect() != null) // Less then 3 indicates barcode. We only want QR codes
                         {
                             channel.invokeMethod("onRecognizeQRViewfinderRect", barcode?.getDisplayConfiguration()?.scalePreview(barcode?.getPreviewSize())?.flattenToString())
-                            channel.invokeMethod("onRecognizeQRFramingRect", barcode?.getFramingRect()?.flattenToString())
                             channel.invokeMethod("onRecognizeQRPreviewFramingRect", barcode?.getPreviewFramingRect()?.flattenToString())
                             channel.invokeMethod("onRecognizeQRPreviewSize", barcode?.getPreviewSize()?.toString())
                             pauseCamera()

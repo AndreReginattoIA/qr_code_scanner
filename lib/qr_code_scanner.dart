@@ -102,7 +102,6 @@ class QRViewController {
   StreamController<String> _scanStringController = StreamController<String>();
   StreamController<String> _scanResultPointsController = StreamController<String>();
   StreamController<String> _viewfinderRectController = StreamController<String>();
-  StreamController<String> _framingRectController = StreamController<String>();
   StreamController<String> _previewFramingRectController = StreamController<String>();
   StreamController<String> _previewSizeController = StreamController<String>();
   StreamController<String> _bitMatrixController = StreamController<String>();
@@ -111,7 +110,6 @@ class QRViewController {
   Stream<String> get scannedStringStream => _scanStringController.stream;
   Stream<String> get scannedResultPointsStream => _scanResultPointsController.stream;
   Stream<String> get viewfinderRectStream => _viewfinderRectController.stream;
-  Stream<String> get framingRectStream => _framingRectController.stream;
   Stream<String> get previewFramingRectStream => _previewFramingRectController.stream;
   Stream<String> get previewSizeStream => _previewSizeController.stream;
   Stream<String> get bitMatrixStream => _bitMatrixController.stream;
@@ -142,11 +140,6 @@ class QRViewController {
           case "onRecognizeQRViewfinderRect":
             if (call.arguments != null)
               _viewfinderRectController.sink.add(call.arguments.toString());
-            break;
-          
-          case "onRecognizeQRFramingRect":
-            if (call.arguments != null)
-              _framingRectController.sink.add(call.arguments.toString());
             break;
           
           case "onRecognizeQRPreviewFramingRect":
@@ -193,7 +186,6 @@ class QRViewController {
   _scanStringController.close();
   _scanResultPointsController.close();
   _viewfinderRectController.close();
-  _framingRectController.close();
   _previewFramingRectController.close();
   _previewSizeController.close();
   _bitMatrixController.close();
