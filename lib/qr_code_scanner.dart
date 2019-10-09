@@ -171,12 +171,12 @@ class QRViewController {
     _channel.invokeMethod("toggleFlash");
   }
 
-  void pauseCamera() {
+  void pause() {
     _animatedSquareController.sink.add("pause");
     _channel.invokeMethod("pauseCamera");
   }
 
-  void resumeCamera() {
+  void resume() {
     _animatedSquareController.sink.add("resume");
     _channel.invokeMethod("resumeCamera");
     qrText = null;
