@@ -95,6 +95,8 @@ class _CreationParams {
 
 class QRViewController {
 
+  String qrText;
+
   final MethodChannel _channel;
 
   StreamController<String> _scanStringController = StreamController<String>();
@@ -104,6 +106,7 @@ class QRViewController {
   StreamController<String> _previewFramingRectController = StreamController<String>();
   StreamController<String> _previewSizeController = StreamController<String>();
   StreamController<String> _bitMatrixController = StreamController<String>();
+  StreamController<String> _animatedSquareController = StreamController<String>();
 
   Stream<String> get scannedStringStream => _scanStringController.stream;
   Stream<String> get scannedResultPointsStream => _scanResultPointsController.stream;
@@ -112,6 +115,7 @@ class QRViewController {
   Stream<String> get previewFramingRectStream => _previewFramingRectController.stream;
   Stream<String> get previewSizeStream => _previewSizeController.stream;
   Stream<String> get bitMatrixStream => _bitMatrixController.stream;
+  Stream<String> get animatedSquareStream => _animatedSquareController.stream;
 
   QRViewController._(int id, GlobalKey qrKey)
       : _channel = MethodChannel('net.touchcapture.qr.flutterqr/qrview_$id') {
@@ -124,8 +128,10 @@ class QRViewController {
       (MethodCall call) async {
         switch (call.method) {
           case "onRecognizeQRString":
-            if (call.arguments != null)
+            if (call.arguments != null) {
+              qrText = call.arguments.toString();
               _scanStringController.sink.add(call.arguments.toString());
+            }
             break;
 
           case "onRecognizeQRResultPoints":
@@ -163,7 +169,9 @@ class QRViewController {
   }
 
   void flipCamera() {
+    _animatedSquareController.sink.add("flip");
     _channel.invokeMethod("flipCamera");
+    qrText = null;
   }
 
   void toggleFlash() {
@@ -171,11 +179,14 @@ class QRViewController {
   }
 
   void pauseCamera() {
+    _animatedSquareController.sink.add("pause");
     _channel.invokeMethod("pauseCamera");
   }
 
   void resumeCamera() {
+    _animatedSquareController.sink.add("resume");
     _channel.invokeMethod("resumeCamera");
+    qrText = null;
   }
 
   void dispose() {
