@@ -10,12 +10,12 @@ class QRView extends StatefulWidget {
   const QRView({
     required this.key,
     required this.onQRViewCreated,
-    required this.overlay,
+    this.overlay,
   })  : super(key: key);
 
   final QRViewCreatedCallback onQRViewCreated;
   final GlobalKey key;
-  final ShapeBorder overlay;
+  final ShapeBorder? overlay;
 
   @override
   State<StatefulWidget> createState() => _QRViewState();
@@ -30,7 +30,7 @@ class _QRViewState extends State<QRView> {
         widget.overlay != null
             ? Container(
                 decoration: ShapeDecoration(
-                  shape: widget.overlay,
+                  shape: widget.overlay!,
                 ),
               )
             : Container(),
