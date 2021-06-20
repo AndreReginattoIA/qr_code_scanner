@@ -8,15 +8,13 @@ typedef void QRViewCreatedCallback(QRViewController controller);
 
 class QRView extends StatefulWidget {
   const QRView({
-    @required Key key,
-    @required this.onQRViewCreated,
-    this.overlay,
-  })  : assert(key != null),
-        assert(onQRViewCreated != null),
-        super(key: key);
+    required this.key,
+    required this.onQRViewCreated,
+    required this.overlay,
+  })  : super(key: key);
 
   final QRViewCreatedCallback onQRViewCreated;
-
+  final GlobalKey key;
   final ShapeBorder overlay;
 
   @override
@@ -73,7 +71,7 @@ class _QRViewState extends State<QRView> {
 }
 
 class _CreationParams {
-  _CreationParams({this.width, this.height});
+  _CreationParams({required this.width, required this.height});
 
   static _CreationParams fromWidget(double width, double height) {
     return _CreationParams(
@@ -95,7 +93,7 @@ class _CreationParams {
 
 class QRViewController {
 
-  String qrText;
+  String? qrText;
 
   final MethodChannel _channel;
 
@@ -118,7 +116,7 @@ class QRViewController {
   QRViewController._(int id, GlobalKey qrKey)
       : _channel = MethodChannel('net.touchcapture.qr.flutterqr/qrview_$id') {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
-      final RenderBox renderBox = qrKey.currentContext.findRenderObject();
+      final RenderBox renderBox = qrKey.currentContext!.findRenderObject() as RenderBox;
       _channel.invokeMethod("setDimensions",
           {"width": renderBox.size.width, "height": renderBox.size.height});
     }
@@ -189,5 +187,6 @@ class QRViewController {
   _previewFramingRectController.close();
   _previewSizeController.close();
   _bitMatrixController.close();
+  _animatedSquareController.close();
   }
 }
